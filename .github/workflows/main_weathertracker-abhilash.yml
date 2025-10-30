@@ -51,5 +51,5 @@ jobs:
         with:
           app-name: 'WeatherTracker-abhilash'
           slot-name: 'Production'
-          package: .
+          package: ${{ env.DOTNET_ROOT }}/myapp
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_34386749A98841B1908CB9E8645EBF66 }}
