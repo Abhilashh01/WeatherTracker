@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -26,30 +26,29 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: Publish app
+        run: dotnet publish -c Release -o myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: myapp
 
   deploy:
     runs-on: windows-latest
     needs: build
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'WeatherTracker-abhilash'
           slot-name: 'Production'
-          package: ${{ env.DOTNET_ROOT }}/myapp
+          package: ${{ github.workspace }}/.net-app
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_34386749A98841B1908CB9E8645EBF66 }}
